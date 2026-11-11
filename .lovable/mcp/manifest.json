@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "sdk_version": "3.5.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "gold-star-2-0",
+      "version": "0.1.0",
+      "title": "Gold Star 2.0"
+    },
+    "tools": [
+      {
+        "name": "list_example_rules",
+        "title": "List example rules",
+        "description": "List Gold Star's built-in example rules, optionally filtered by scope or project id.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "scope": {
+              "description": "Only rules with this scope.",
+              "type": "string",
+              "enum": [
+                "global",
+                "local"
+              ]
+            },
+            "project_id": {
+              "description": "Only rules that apply to this project id, e.g. product-a.",
+              "type": "string",
+              "maxLength": 80
+            }
+          },
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_example_rule",
+        "title": "Get example rule",
+        "description": "Get one built-in example rule, optionally formatted for AGENTS.md, .cursorrules, or Claude instructions.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80,
+              "description": "Rule id from list_example_rules."
+            },
+            "format": {
+              "description": "Export format for the rule text.",
+              "type": "string",
+              "enum": [
+                "agents",
+                "cursor",
+                "claude"
+              ]
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_example_projects",
+        "title": "List example projects",
+        "description": "List the built-in example projects that Gold Star rules apply to.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

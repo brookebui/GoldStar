@@ -1,0 +1,56 @@
+- [x] Show a disabled third-project constellation preview without changing active rule targets; verify selection and filters.
+- [x] Expand the canvas to six accepted demo rules and verify global/project filtering and uncluttered layout.
+- [x] Build hierarchical multi-rule canvas with scope filters and connection spotlight.
+- [x] Replace canvas drafts and approval with accepted rules and immediate scope updates.
+- [x] Share Inbox acceptance, chosen agents, and edited markdown with the canvas for this demo session.
+- [x] Verify acceptance and scope changes across tabs and existing tests.
+- [x] Add global/local drafts, compiled rulebooks, conflict resolution, and per-rule verification.
+- [x] Verify scope rules and canvas interactions at desktop and narrow widths.
+- [x] Create shared editable agent identities for this demo.
+- [x] Use consistent identities across suggestions, project-grouped rules, and executions.
+- [x] Verify renaming across tabs and existing scope/receipt tests.
+- [x] Consolidate typography, buttons, status badges, and card foundations without changing state or data.
+- [x] Apply consistent treatments across Inbox, Canvas, and Receipts.
+- [x] Validate three screens, narrow layouts, and existing interactions.
+- [x] Shelve Proposals from navigation while retaining its implementation for later.
+- [x] Surface the Button/commerce conflict during acceptance, require explicit exclusion, and link confirmation to rule-specific verification.
+- [x] Lead Canvas with Inbox-accepted rules, show excluded boundaries, and connect original evidence to clearly labeled example verification.
+- [x] Expand all Inbox trace sessions, label demo evidence, and verify selection and collapse.
+- [x] Reduce the Learning Inbox heading size.
+- [x] Add connected Read-only and Edit tabs to the rule text box and verify edits survive mode changes.
+- [x] Remove the selected decorative star from the Inbox card.
+- [x] Replace rule tabs with formatted View, explicit Save/Cancel editing, and raw Markdown copying; verify the complete flow.
+- [x] Make the accept/dismiss action bar span the details panel, stick to its bottom edge, with buttons on the right; verify at scroll top, middle, and end.
+- [x] Drop the trace count line, put Show all traces beside the visible chips, and mark the extra traces; verify at desktop and narrow widths.
+- [x] Redesign the Strong pattern tag as a gold pill with info icon and a dark popover (arrow, counts, hover/click/keyboard/touch); remove the category tag hover.
+- [x] Simplify the traces button to "Show all traces +6 more" without the total count.
+- [x] Blend the pattern popover's triangle pointer into the popover surface (shared fill and border).
+- [x] Remove the "Proposed rule" header; make Edit/Copy buttons tabs inside the textbox.
+- [x] Remove the "Examples" badge beside the Trace evidence heading.
+- [x] Show acceptance confirmation above a smoothly blurred details panel and verify acceptance, dismissal, and narrow layouts.
+- [x] Start accepted rules without verification and track per-agent stars through clearly labeled example runs, retaining earned history.
+- [x] Verify followed, deviated, not-delivered, recovery, and cross-tab continuity.
+
+## Project-level rules only
+- [x] Phase 1: project-only acceptance picker and confirmation
+- [ ] Phase 2: simplify scope data model to projects
+- [x] Phase 3: remove agent tier from Rule Canvas
+- [x] Phase 4: project-level verification and stars
+- [x] Drop the "Can't be selected" note and show the conflicting-convention line in red
+- [x] Show "Components" instead of "Design system" on the Inbox card label
+- [x] Make the pending/accepted/dismissed tab row fill its width
+- [x] Return the conflicting-convention line to grey
+- [x] Add a subtle dancing star above "Rule saved to scope" and mark the saved-rule banner with a gold star icon
+- [x] Make the "View confirmation" link green
+- [x] Remove the Product C preview project from the canvas
+- [x] Use a draft (pencil) icon on the Draft rule button instead of the gold star
+- [x] Remove the "Watching 2 agents" block from the sidebar footer
+- [x] Rename the sidebar nav label to "Proposed Rules"
+- [x] Remove the agent-renaming feature; label agents by their project (e.g. "Product A") instead of "UI Builder"
+- [x] Make the canvas inspector read-only for scope: no project switcher, only the tier and which projects receive the rule
+- [x] Show the rule category as a pill in the canvas inspector header
+- [x] Remove the "Original correction" link from the canvas inspector
+- [x] Put the category and status pills on one row in the rule panel header
+- [x] Add a Remove rule button in the panel with the same detach confirmation
+- [x] Give local-rule wires their own stroke color so scope reads at a glance
+- [x] Synchronize example-rule visibility and its toolbar button across Canvas and List; verify empty and custom-rule states.

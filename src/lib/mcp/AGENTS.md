@@ -1,0 +1,1 @@
+- This MCP server is public and serves only built-in example data, because session edits exist only in the browser.
