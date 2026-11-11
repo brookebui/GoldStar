@@ -80,6 +80,7 @@ function CanvasWorkspace() {
   const [removing, setRemoving] = useState<{ id: string; name: string; rules: string[] } | null>(null);
   const [creating, setCreating] = useState<"project" | "rule" | null>(null);
   const [bursting, setBursting] = useState<string | null>(null);
+  const [fadingEdges, setFadingEdges] = useState<string[]>([]);
   const [sparks, setSparks] = useState<CanvasSpark[]>([]);
   const burstTimers = useRef<number[]>([]);
   useEffect(() => () => burstTimers.current.forEach(clearTimeout), []);
@@ -117,13 +118,14 @@ function CanvasWorkspace() {
   if (globalsVisible && selected) related.add("inheritance");
   const visibleKey = `${visibleRules.join(",")}:${visibleProjects.join(",")}:${selected ? "open" : "closed"}`;
   useEffect(() => {
+    if (bursting) return;
     const surface = surfaceRef.current;
     if (!surface) return;
     let timer: ReturnType<typeof setTimeout>;
     const fit = () => { clearTimeout(timer); timer = setTimeout(() => { void flow.fitView({ padding: 0.16, duration: 200 }); }, 100); };
     const observer = new ResizeObserver(fit); observer.observe(surface); fit();
     return () => { clearTimeout(timer); observer.disconnect(); };
-  }, [flow, visibleKey]);
+  }, [flow, visibleKey, bursting]);
   const nodes = useMemo(() => positions.map((node) => {
     const item = rules.find((r) => r.id === node.id);
     const identity = agents.find((a) => a.id === node.id);
@@ -142,7 +144,8 @@ function CanvasWorkspace() {
   const edges: BuiltInEdge[] = [];
   function addEdge(source: string, target: string, ruleId?: string, stepPosition?: number) {
     const scopeType = ruleId ? scopes[ruleId]?.scopeType ?? "global" : "global";
-    edges.push({ id: `${source}-${target}`, source, target, interactionWidth: 18, type: "smoothstep", pathOptions: stepPosition === undefined ? {} : { stepPosition }, data: { ruleId }, className: edgeClasses(scopeType, Boolean(selected), related.has(source) && related.has(target)) });
+    const id = `${source}-${target}`;
+    edges.push({ id, source, target, interactionWidth: 18, type: "smoothstep", pathOptions: stepPosition === undefined ? {} : { stepPosition }, data: { ruleId }, className: cn(edgeClasses(scopeType, Boolean(selected), related.has(source) && related.has(target)), fadingEdges.includes(id) && "edge-fade") });
   }
   // Global wires share one entry point, so without this they bend at the same height and stack into one doubled line.
   const globalLanes = visibleRules.filter((id) => scopes[id]?.scopeType === "global" && !isInactive(id));
@@ -151,17 +154,28 @@ function CanvasWorkspace() {
   if (globalsVisible && !focusedScope) visibleProjects.filter((pid) => visibleRules.some((rid) => { const d = scopes[rid]; return d?.scopeType === "global" && scopeForRule(d).projects.includes(pid); })).forEach((id) => addEdge("inheritance", id));
   function resetView() { setFocusRule("all"); setSelected(null); }
   const [pending, setPending] = useState<WiringChange | null>(null);
-  function explode(nodeId: string, onDone: () => void, collapse = true) {
+  function explode(nodeId: string, onDone: () => void, collapse = true, fadeIds?: string[]) {
+    const fade = fadeIds ?? edges.filter((edge) => edge.source === nodeId || edge.target === nodeId).map((edge) => edge.id);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const surface = surfaceRef.current;
     const nodeEl = surface?.querySelector(`.react-flow__node[data-id="${CSS.escape(nodeId)}"]`);
     if (reduce || !surface || !nodeEl) { onDone(); return; }
     const nodeBox = nodeEl.getBoundingClientRect();
     const surfaceBox = surface.getBoundingClientRect();
-    setSparks(sparksFromPoint(nodeBox.left - surfaceBox.left + nodeBox.width / 2, nodeBox.top - surfaceBox.top + nodeBox.height / 2));
+    setFadingEdges(fade);
+    setSparks(sparksFromPoint(nodeBox.left - surfaceBox.left + nodeBox.width / 2, nodeBox.top - surfaceBox.top + nodeBox.height / 2, nodeBox.width, nodeBox.height));
     if (collapse) setBursting(nodeId);
-    burstTimers.current.push(window.setTimeout(() => { onDone(); setBursting(null); }, collapse ? 520 : 180));
-    burstTimers.current.push(window.setTimeout(() => setSparks([]), 1100));
+    burstTimers.current.push(window.setTimeout(() => { onDone(); setBursting(null); setFadingEdges([]); }, collapse ? 680 : 580));
+    burstTimers.current.push(window.setTimeout(() => setSparks([]), 1500));
+  }
+  function fadeForRule(ruleId: string, next: WiringChange["next"]) {
+    const remaining = new Set(scopeForRule(next).projects);
+    return edges.filter((edge) => {
+      const ends = [edge.source, edge.target];
+      if (!ends.includes(ruleId) && edge.data?.ruleId !== ruleId) return false;
+      if (remaining.size === 0) return true;
+      return ends.some((id) => id !== ruleId && id !== "inheritance" && !remaining.has(id));
+    }).map((edge) => edge.id);
   }
   function wire(a: string, b: string, cut: boolean) {
     const r = rules.find((item) => item.id === a) ?? rules.find((item) => item.id === b);
@@ -184,7 +198,7 @@ function CanvasWorkspace() {
         {visibleRules.length === 0 && <div className="absolute inset-x-0 top-20 flex flex-col items-center gap-4 text-center"><p className="text-sm text-muted-foreground">{workspaceRules.length === 0 ? "No rules accepted yet" : "No rules in this view"}</p><Button variant="outline" asChild><Link to="/">Review Learning Inbox</Link></Button></div>}
         <div className="absolute bottom-5 left-5 z-10 flex items-center rounded-full border border-border bg-card/70 p-0.5 opacity-70 shadow-soft backdrop-blur transition-opacity hover:opacity-100 focus-within:opacity-100"><Button variant="ghost" size="icon" title="Zoom out" aria-label="Zoom out" onClick={() => flow.zoomOut()}><Minus /></Button><Button variant="ghost" size="icon" title="Fit canvas" aria-label="Fit canvas" onClick={() => flow.fitView({ padding: 0.16, duration: 200 })}><Maximize /></Button><Button variant="ghost" size="icon" title="Zoom in" aria-label="Zoom in" onClick={() => flow.zoomIn()}><Plus /></Button><span className="mx-1 h-4 border-l border-border" /><TooltipProvider delayDuration={150}><Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Canvas help"><CircleHelp /></Button></TooltipTrigger><TooltipContent side="top" align="start" sideOffset={10} className="max-w-72 space-y-2 border border-border bg-card p-3 text-foreground shadow-soft"><p className="text-sm font-medium">Canvas connections</p><p>Drag a rule's dot onto a project to attach it, or onto Global to apply it everywhere.</p><p>Click a wire to detach it.</p><p className="text-muted-foreground">Cream wires are global, blue wires are local.</p></TooltipContent></Tooltip></TooltipProvider></div>
       </section>
-      <AlertDialog open={Boolean(pending)} onOpenChange={(open) => { if (!open) setPending(null); }}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>{pending?.title}</AlertDialogTitle><AlertDialogDescription>{pending?.body}</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel>{pending?.lastWire && <AlertDialogAction className="border border-destructive bg-destructive/10 text-destructive shadow-none hover:bg-destructive/20" onClick={() => { if (!pending) return; const change = pending; setPending(null); explode(change.ruleId, () => { update(change.ruleId, change.next); archive(change.ruleId); if (selected === change.ruleId) setSelected(null); if (focusRule === change.ruleId) setFocusRule("all"); }, true); }}>Archive rule</AlertDialogAction>}<AlertDialogAction className={pending?.destructive && !pending.lastWire ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : undefined} onClick={() => { if (!pending) return; const change = pending; setPending(null); if (change.destructive) explode(change.ruleId, () => update(change.ruleId, change.next), false); else update(change.ruleId, change.next); }}>{pending?.action}</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
+      <AlertDialog open={Boolean(pending)} onOpenChange={(open) => { if (!open) setPending(null); }}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>{pending?.title}</AlertDialogTitle><AlertDialogDescription>{pending?.body}</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel>{pending?.lastWire && <AlertDialogAction className="border border-destructive bg-destructive/10 text-destructive shadow-none hover:bg-destructive/20" onClick={() => { if (!pending) return; const change = pending; setPending(null); explode(change.ruleId, () => { update(change.ruleId, change.next); archive(change.ruleId); if (selected === change.ruleId) setSelected(null); if (focusRule === change.ruleId) setFocusRule("all"); }, true); }}>Archive rule</AlertDialogAction>}<AlertDialogAction className={pending?.destructive && !pending.lastWire ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : undefined} onClick={() => { if (!pending) return; const change = pending; setPending(null); if (change.destructive) explode(change.ruleId, () => update(change.ruleId, change.next), false, fadeForRule(change.ruleId, change.next)); else update(change.ruleId, change.next); }}>{pending?.action}</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
       <AlertDialog open={Boolean(removing)} onOpenChange={(open) => { if (!open) setRemoving(null); }}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Remove {removing?.name}?</AlertDialogTitle><AlertDialogDescription>{removing && removing.rules.length > 0 ? `${removing.name} will be removed from the canvas, and the ${removing.rules.length} rule${removing.rules.length === 1 ? "" : "s"} attached to it will be removed from this project. Agents in ${removing.name} stop receiving them. Rules attached only to this project will become inactive.` : `${removing?.name} will be removed from the canvas. No rules are attached to it.`}</AlertDialogDescription></AlertDialogHeader>{removing && removing.rules.length > 0 && <ul className="rounded-md border border-border bg-muted/40 px-3 py-2.5 text-sm">{removing.rules.map((name) => <li key={name} className="py-0.5">{name}</li>)}</ul>}<AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => { if (!removing) return; const gone = removing; setRemoving(null); explode(gone.id, () => { removeProject(gone.id); if (filter === gone.id) setFilter("all"); setSelected(null); }, true); }}>Remove project</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
       <CreateDialog kind={creating} onClose={() => setCreating(null)} globalCount={rules.filter((r) => !archived.includes(r.id) && scopes[r.id]?.scopeType === "global" && scopeForRule(scopes[r.id]!).projects.length > 0).length} onCreate={(kind, a, b, c, inherit) => { const id = kind === "project" ? addProject(a, b, inherit) : draftRule(a, b, c); setFocusRule("all"); setFilter("all"); setSelected(id); }} />
       <aside className="flex min-w-0 flex-col border-l border-border bg-card" aria-label="Contextual inspector" hidden={!selected}>

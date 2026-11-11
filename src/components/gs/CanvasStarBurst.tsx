@@ -2,20 +2,20 @@ import { Star } from "./Star";
 
 export type CanvasSpark = { id: string; left: number; top: number; dx: number; dy: number; delay: number; dur: number; size: number; rot: number };
 
-export function sparksFromPoint(x: number, y: number, count = 14): CanvasSpark[] {
+export function sparksFromPoint(x: number, y: number, width = 0, height = 0, count = 22): CanvasSpark[] {
   return Array.from({ length: count }, (_, i) => {
-    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
-    const dist = 48 + Math.random() * 90;
+    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.55;
+    const dist = Math.max(width, height) * 0.4 + 64 + Math.random() * 130;
     return {
       id: `${i}-${Math.round(x)}-${Math.round(y)}-${Math.random().toString(36).slice(2, 6)}`,
-      left: x,
-      top: y,
+      left: x + (Math.random() - 0.5) * width * 0.55,
+      top: y + (Math.random() - 0.5) * height * 0.5,
       dx: Math.cos(angle) * dist,
-      dy: 70 + Math.random() * 110 + Math.sin(angle) * 20,
-      delay: Math.random() * 90,
-      dur: 680 + Math.random() * 380,
+      dy: Math.sin(angle) * dist,
+      delay: Math.random() * 140,
+      dur: 920 + Math.random() * 480,
       size: 7 + Math.random() * 11,
-      rot: 120 + Math.random() * 280,
+      rot: 90 + Math.random() * 240,
     };
   });
 }
