@@ -58,7 +58,7 @@ export function RulesSidebar({ view, onFilterChange, onToggleExamples, onDraftRu
       </div>
       <p className="gs-rules-nav-copy gs-secondary mt-3">Manage how your rules connect across projects.</p>
       <div className="gs-rules-nav-copy relative mt-6"><Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" /><Input value={rulesQuery} onChange={(e) => setRulesQuery(e.target.value)} placeholder="Search rules" aria-label="Search rules" className="h-8 pl-8 text-sm" /></div>
-      <div className="mt-3"><RulesViewToggle view={view} /></div>
+      <div className="mt-3"><RulesViewToggle view={view} collapsed={rulesNavCollapsed} /></div>
     </div>
     <nav id="constellations-nav" aria-label="Rule filters" className="gs-rules-nav-filters min-h-0 flex-1 space-y-5 overflow-y-auto px-8 pb-4">
       <div className="space-y-0.5">

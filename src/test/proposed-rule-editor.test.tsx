@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ProposedRuleEditor } from "@/components/gs/ProposedRuleEditor";
 
@@ -29,15 +29,19 @@ describe("Proposed rule editing", () => {
     expect(screen.getByRole("textbox", { name: "Rule markdown" })).toHaveValue(original);
   });
 
-  it("copies raw saved Markdown in View and current draft Markdown in Edit", async () => {
-    const writeText = vi.fn().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
-    render(<ProposedRuleEditor markdown={original} onSave={vi.fn()} />);
-    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Copy" })); });
-    expect(writeText).toHaveBeenLastCalledWith(original);
+  it("opens the share dialog with saved Markdown in View and current draft Markdown in Edit", async () => {
+    render(<ProposedRuleEditor markdown={original} onSave={vi.fn()} rule={{ id: "spacing", name: "Spacing rule" }} />);
+    fireEvent.click(screen.getByRole("button", { name: /Share/i }));
+    const viewDialog = screen.getByRole("dialog");
+    expect(within(viewDialog).getByRole("heading", { name: "Share rule" })).toBeTruthy();
+    expect(within(viewDialog).getByText(/Use spacing tokens/)).toBeTruthy();
+    fireEvent.click(within(viewDialog).getByRole("button", { name: "Close" }));
+
     fireEvent.click(screen.getByRole("button", { name: "Edit" }));
-    fireEvent.change(screen.getByRole("textbox", { name: "Rule markdown" }), { target: { value: "## Unsaved draft" } });
-    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Copy" })); });
-    expect(writeText).toHaveBeenLastCalledWith("## Unsaved draft");
+    fireEvent.change(screen.getByRole("textbox", { name: "Rule markdown" }), { target: { value: "## Unsaved draft\n\nScale 8px." } });
+    fireEvent.click(screen.getByRole("button", { name: /Share/i }));
+    const editDialog = screen.getByRole("dialog");
+    expect(within(editDialog).getByRole("heading", { name: "Share rule" })).toBeTruthy();
+    expect(within(editDialog).getByText(/Unsaved draft/)).toBeTruthy();
   });
 });

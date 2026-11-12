@@ -53,4 +53,11 @@ describe("Shared example-rule visibility", () => {
     expect(screen.getByText("Custom rule")).toBeTruthy();
     expect(screen.queryByText("Button convention")).toBeNull();
   });
+
+  it("shows demo purposes tooltip for example rules toggle", async () => {
+    render(<RuleScopeProvider><Workspace /></RuleScopeProvider>);
+    const toggle = screen.getByRole("switch", { name: "Example rules" });
+    fireEvent.focus(toggle);
+    expect(await screen.findByText("For demo purposes only")).toBeTruthy();
+  });
 });
