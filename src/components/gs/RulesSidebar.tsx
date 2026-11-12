@@ -63,8 +63,10 @@ export function RulesSidebar({ view, onFilterChange, onToggleExamples, onDraftRu
     <nav id="constellations-nav" aria-label="Rule filters" className="gs-rules-nav-filters min-h-0 flex-1 space-y-5 overflow-y-auto px-8 pb-4">
       <div className="space-y-0.5">
         {item("all", "All rules", Layers)}
-        {item("global", "Global", Globe)}
-        {item("local", "Local", MapPin)}
+        <div data-tour="global-local" className="space-y-0.5">
+          {item("global", "Global", Globe)}
+          {item("local", "Local", MapPin)}
+        </div>
         {unassigned > 0 && item("unassigned", "Unassigned", Unlink)}
       </div>
       <div className="space-y-0.5">
@@ -72,12 +74,12 @@ export function RulesSidebar({ view, onFilterChange, onToggleExamples, onDraftRu
         {projects.map((p) => item(p.id, p.name, Box))}
       </div>
     </nav>
-    <div className="gs-rules-nav-footer flex flex-col space-y-2 border-t border-border px-8 py-4">
+    <div className="gs-rules-nav-footer shrink-0 flex flex-col space-y-2 border-t border-border bg-[#09090B] px-8 py-4">
       <Tooltip><TooltipTrigger asChild>
-        <Button variant="outline" size="sm" className="gs-rules-nav-action w-full justify-start" onClick={onDraftRule} aria-label="Draft rule"><SquarePen className="size-3.5" /><span className="gs-rules-nav-copy">Draft rule</span></Button>
+        <Button variant="outline" size="sm" className="gs-rules-nav-action w-full justify-start bg-[#09090B]" onClick={onDraftRule} aria-label="Draft rule"><SquarePen className="size-3.5" /><span className="gs-rules-nav-copy">Draft rule</span></Button>
       </TooltipTrigger>{rulesNavCollapsed && <TooltipContent side="right">Draft rule</TooltipContent>}</Tooltip>
       <Tooltip><TooltipTrigger asChild>
-        <Button variant="outline" size="sm" className="gs-rules-nav-action w-full justify-start" onClick={onAddProject} aria-label="Add project"><Box /><span className="gs-rules-nav-copy">Add project</span></Button>
+        <Button variant="outline" size="sm" className="gs-rules-nav-action w-full justify-start bg-[#09090B]" onClick={onAddProject} aria-label="Add project"><Box /><span className="gs-rules-nav-copy">Add project</span></Button>
       </TooltipTrigger>{rulesNavCollapsed && <TooltipContent side="right">Add project</TooltipContent>}</Tooltip>
       <ExampleRulesToggle onToggle={onToggleExamples} />
     </div>

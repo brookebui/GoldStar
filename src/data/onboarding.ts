@@ -27,10 +27,10 @@ export const tourSteps: TourStep[] = [
     body: "This is the map of how rules reach projects. Open it when you want to attach, detach, or see scope at a glance.",
   },
   {
-    id: "rules-view",
+    id: "global-local",
     route: "/canvas",
-    title: "Canvas or List",
-    body: "Canvas is the constellation map. List is the same rules in a table. Switch anytime — filters stay in sync.",
+    title: "Global or local",
+    body: "Global rules apply across every project in your workspace so agents maintain universal standards. Local rules are scoped to specific projects to enforce unique conventions without affecting others.",
   },
   {
     id: "canvas-surface",
