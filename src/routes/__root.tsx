@@ -14,6 +14,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppShell } from "../components/gs/AppShell";
 import { RuleScopeProvider } from "../components/gs/RuleScopeProvider";
+import { OnboardingProvider } from "../components/gs/OnboardingProvider";
+import { OnboardingHost } from "../components/gs/OnboardingHost";
 
 function NotFoundComponent() {
   return (
@@ -129,9 +131,9 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <RuleScopeProvider><AppShell>
+      <RuleScopeProvider><OnboardingProvider><AppShell>
         <Outlet />
-      </AppShell></RuleScopeProvider>
+      </AppShell><OnboardingHost /></OnboardingProvider></RuleScopeProvider>
     </QueryClientProvider>
   );
 }
