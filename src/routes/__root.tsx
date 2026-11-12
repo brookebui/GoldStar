@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { StarCompanion } from "../components/gs/StarCompanion";
 import { AppShell } from "../components/gs/AppShell";
 import { RuleScopeProvider } from "../components/gs/RuleScopeProvider";
 
@@ -131,6 +132,7 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <RuleScopeProvider><AppShell>
         <Outlet />
+        <StarCompanion />
       </AppShell></RuleScopeProvider>
     </QueryClientProvider>
   );

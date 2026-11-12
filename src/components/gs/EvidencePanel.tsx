@@ -17,7 +17,7 @@ import { acceptanceConflicts } from "@/data/acceptance-conflicts";
 import { ProposedRuleEditor } from "./ProposedRuleEditor";
 import { ShareRuleButton } from "./ShareRuleDialog";
 
-const drafts = new Map<string, string>();
+export const drafts = new Map<string, string>();
 
 // Chips sit on one row with the show-all button, so trace ages read compactly here.
 function compactWhen(when: string) {
@@ -63,7 +63,7 @@ function TraceView({ t }: { t: Trace }) {
   );
 }
 
-export function EvidencePanel({ s, status, onStatus }: { s: Suggestion; status: SuggestionStatus; onStatus: (status: SuggestionStatus) => void }) {
+export function EvidencePanel({ s, status, onStatus, initialEditing = false }: { initialEditing?: boolean; s: Suggestion; status: SuggestionStatus; onStatus: (status: SuggestionStatus) => void }) {
   const [active, setActive] = useState(0);
   const [showAllTraces, setShowAllTraces] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
@@ -95,7 +95,7 @@ export function EvidencePanel({ s, status, onStatus }: { s: Suggestion; status: 
         </div>
       )}
 
-      <div className="mt-6"><ProposedRuleEditor key={s.id} markdown={drafts.get(s.id) ?? s.proposedMarkdown} onSave={(value) => drafts.set(s.id, value)} />
+      <div className="mt-6"><ProposedRuleEditor initialEditing={initialEditing} key={s.id} markdown={drafts.get(s.id) ?? s.proposedMarkdown} onSave={(value) => drafts.set(s.id, value)} />
       </div>
 
       {status === "accepted" && (<>
