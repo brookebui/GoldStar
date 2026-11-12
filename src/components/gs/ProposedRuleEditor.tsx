@@ -4,10 +4,10 @@ import { Check, Copy, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export function ProposedRuleEditor({ markdown, onSave }: { markdown: string; onSave: (value: string) => void }) {
+export function ProposedRuleEditor({ markdown, onSave, initialEditing = false }: { initialEditing?: boolean; markdown: string; onSave: (value: string) => void }) {
   const [saved, setSaved] = useState(markdown);
   const [draft, setDraft] = useState(markdown);
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(initialEditing);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
 
   async function copyMarkdown() {

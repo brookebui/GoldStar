@@ -10,7 +10,7 @@ import { EvidencePanel } from "@/components/gs/EvidencePanel";
 import { useRuleScope } from "@/components/gs/RuleScopeProvider";
 
 export const Route = createFileRoute("/")({
-  validateSearch: (search: Record<string, unknown>): { rule?: string } => typeof search["rule"] === "string" ? { rule: search["rule"] } : {},
+  validateSearch: (search: Record<string, unknown>): { rule?: string; edit?: boolean } => typeof search["rule"] === "string" ? { rule: search["rule"], edit: search["edit"] === true } : {},
   head: () => ({
     meta: [
       { title: "Learning Inbox — Gold Star" },
@@ -26,12 +26,15 @@ export const Route = createFileRoute("/")({
 
 function Inbox() {
   const search = Route.useSearch();
-  const { accepted } = useRuleScope();
+  return <InboxView key={JSON.stringify(search)} search={search} />;
+}
+
+function InboxView({ search }: { search: { rule?: string; edit?: boolean } }) {
+  const { accepted, statuses, setStatus } = useRuleScope();
   const [selectedId, setSelectedId] = useState(search.rule ?? suggestions[0]?.id);
   const [query, setQuery] = useState("");
-  const [tab, setTab] = useState<SuggestionStatus>(search.rule && accepted[search.rule] ? "accepted" : "pending");
+  const [tab, setTab] = useState<SuggestionStatus>(search.rule && accepted[search.rule] ? "accepted" : search.rule ? statuses[search.rule] ?? "pending" : "pending");
   const [category, setCategory] = useState<RuleCategory | "All">("All");
-  const [statuses, setStatuses] = useState<Record<string, SuggestionStatus>>({});
   const currentStatuses: Record<string, SuggestionStatus> = { ...statuses, ...Object.fromEntries(Object.keys(accepted).map((id) => [id, "accepted" as const])) };
   const visible = filterSuggestions(suggestions, currentStatuses, tab, query, category);
   const count = (t: SuggestionStatus) => filterSuggestions(suggestions, currentStatuses, t, "").length;
@@ -85,7 +88,7 @@ function Inbox() {
           ))}
         </div>
       </section>
-      <section aria-label="Rule details" className="relative isolate min-h-0 min-w-0 overflow-hidden"><div tabIndex={0} className="h-full overflow-y-auto overscroll-contain px-6 pb-0 pt-12 lg:px-14"><EvidencePanel key={selected.id} s={selected} status={currentStatuses[selected.id] ?? "pending"} onStatus={(st) => setStatuses((m) => ({ ...m, [selected.id]: st }))} /></div></section>
+      <section aria-label="Rule details" className="relative isolate min-h-0 min-w-0 overflow-hidden"><div tabIndex={0} className="h-full overflow-y-auto overscroll-contain px-6 pb-0 pt-12 lg:px-14"><EvidencePanel key={selected.id} s={selected} status={currentStatuses[selected.id] ?? "pending"} initialEditing={search.edit === true && search.rule === selected.id} onStatus={(st) => setStatus(selected.id, st)} /></div></section>
     </div>
   );
 }

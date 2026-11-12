@@ -2,7 +2,7 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 import { canvasRules, initialRuleDrafts, type CanvasRule, type RuleDraft } from "@/data/canvas-rules";
 import { scopeFromSelection, scopeForRule, type CanvasFilter } from "@/data/canvas-rules";
 import { projects, type ScopeDraft } from "@/data/rule-scope";
-import type { Suggestion } from "@/data/suggestions";
+import type { Suggestion, SuggestionStatus } from "@/data/suggestions";
 import { createStarRun, type StarRun } from "@/data/star-tracking";
 import { journeyRules } from "@/data/rule-journey";
 
@@ -18,6 +18,8 @@ type ScopeContext = {
   rulesNavCollapsed: boolean;
   setRulesNavCollapsed: (value: boolean | ((current: boolean) => boolean)) => void;
   scopes: Record<string, RuleDraft>;
+  statuses: Record<string, SuggestionStatus>;
+  setStatus: (id: string, status: SuggestionStatus) => void;
   accepted: Record<string, ScopeDraft>;
   latestAcceptedId: string | null;
   verificationRuns: StarRun[];
@@ -36,6 +38,7 @@ const Context = createContext<ScopeContext | null>(null);
 export function RuleScopeProvider({ children }: { children: ReactNode }) {
   const [rules, setRules] = useState(canvasRules);
   const [scopes, setScopes] = useState(initialRuleDrafts);
+  const [statuses, setStatuses] = useState<Record<string, SuggestionStatus>>({});
   const [accepted, setAccepted] = useState<Record<string, ScopeDraft>>({});
   const [latestAcceptedId, setLatestAcceptedId] = useState<string | null>(null);
   const [verificationRuns, setVerificationRuns] = useState<StarRun[]>([]);
@@ -47,6 +50,8 @@ export function RuleScopeProvider({ children }: { children: ReactNode }) {
   const [projectCount, setProjectCount] = useState(projects.length);
   const workspaceRules = journeyRules(rules, accepted, includeExamples).filter((rule) => !archived.includes(rule.id));
   return <Context.Provider value={{ rules, workspaceRules, includeExamples, setIncludeExamples, rulesFilter, setRulesFilter, rulesQuery, setRulesQuery, rulesNavCollapsed, setRulesNavCollapsed, scopes, accepted, latestAcceptedId, verificationRuns, archived, projectCount,
+    statuses,
+    setStatus: (id, status) => setStatuses((current) => ({ ...current, [id]: status })),
     addProject: (name, description, inheritGlobal = true) => {
       const base = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "project";
       let id = base; let n = 2; while (projects.some((p) => p.id === id)) id = `${base}-${n++}`;
