@@ -305,8 +305,7 @@ h1.font-display { line-height: 1.3; overflow-wrap: anywhere; }
 .gs-rules-nav[data-collapsed="true"] .gs-rules-nav-header-row { justify-content: center; }
 .gs-rules-nav[data-collapsed="true"] .gs-rules-nav-filters { padding-left: 0.5rem; padding-right: 0.5rem; }
 .gs-rules-nav[data-collapsed="true"] .gs-rules-nav-filters button { justify-content: center; padding-inline: 0; }
-.gs-rules-nav[data-collapsed="true"] .gs-rules-nav-view { width: 2.5rem; flex-direction: column; margin-inline: auto; }
-.gs-rules-nav[data-collapsed="true"] .gs-rules-nav-view a { padding-inline: 0; }
+.gs-rules-nav[data-collapsed="true"] .gs-rules-nav-view { margin-inline: auto; }
 .gs-rules-nav[data-collapsed="true"] .gs-rules-nav-footer { align-items: center; padding-left: 0.5rem; padding-right: 0.5rem; }
 .gs-rules-nav[data-collapsed="true"] .gs-rules-nav-action { width: 2.5rem; padding-inline: 0; justify-content: center; }
 .gs-rules-nav[data-collapsed="true"] .gs-rules-nav-examples { justify-content: center; }

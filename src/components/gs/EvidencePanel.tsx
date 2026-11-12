@@ -95,7 +95,18 @@ export function EvidencePanel({ s, status, onStatus }: { s: Suggestion; status: 
         </div>
       )}
 
-      <div className="mt-6"><ProposedRuleEditor key={s.id} markdown={drafts.get(s.id) ?? s.proposedMarkdown} onSave={(value) => drafts.set(s.id, value)} />
+      <div className="mt-6">
+        <ProposedRuleEditor
+          key={s.id}
+          markdown={drafts.get(s.id) ?? s.proposedMarkdown}
+          onSave={(value) => drafts.set(s.id, value)}
+          rule={{
+            id: s.id,
+            name: s.summary ?? s.title,
+            global: appliedProjects.length === projects.length,
+            projectNames: appliedProjects.map((p) => p.name),
+          }}
+        />
       </div>
 
       {status === "accepted" && (<>
