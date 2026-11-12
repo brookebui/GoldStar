@@ -191,7 +191,7 @@ function CanvasWorkspace() {
   const verificationScope = verificationScopeState ? scopeForRule(verificationScopeState) : { projects: [], agents: [] };
   return <div className="canvas-page flex"><RulesSidebar view="canvas" onFilterChange={resetView} onDraftRule={() => setCreating("rule")} onAddProject={() => setCreating("project")} onToggleExamples={resetView} />
     <div className="flex min-w-0 flex-1 flex-col"><div className="canvas-workspace grid flex-1" data-inspector={selected ? "open" : "closed"}>
-      <section ref={surfaceRef} className="canvas-surface relative min-w-0" aria-label="Rule scope canvas">
+      <section ref={surfaceRef} className="canvas-surface relative min-w-0" aria-label="Rule scope canvas" data-tour="canvas-surface">
         <img src={nightSky} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover" />
         <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} onNodesChange={onNodesChange} onConnect={connect} connectionMode={ConnectionMode.Loose} onConnectStart={(_, params) => setWiring(Boolean(params.nodeId && rules.some((r) => r.id === params.nodeId)))} onConnectEnd={() => setWiring(false)} onNodeClick={(_, node) => { if (node.id !== "inheritance") { setSelected(node.id); } }} onPaneClick={() => { setSelected(null); }} onEdgeClick={(_, edge) => { if (edge.data?.["ruleId"]) wire(edge.source, edge.target, true); }} onEdgesDelete={(deleted) => { const edge = deleted.find((e) => e.data?.["ruleId"]); if (edge) wire(edge.source, edge.target, true); }} deleteKeyCode={null} fitView fitViewOptions={{ padding: 0.16 }} minZoom={0.2} maxZoom={1.7} proOptions={{ hideAttribution: true }} />
         <CanvasStarBurst sparks={sparks} />

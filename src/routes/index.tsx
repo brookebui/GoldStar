@@ -78,14 +78,14 @@ function Inbox() {
           </PopoverContent>
         </Popover>
         </header>
-        <div role="region" aria-label="Suggested rules" tabIndex={0} className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-8 pb-10">
+        <div role="region" aria-label="Suggested rules" data-tour="inbox-list" tabIndex={0} className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-8 pb-10">
           {visible.length === 0 && <p className="gs-secondary py-10 text-center">{query ? "No rules match your search." : category !== "All" ? `No ${tab} ${category.toLowerCase()} rules yet.` : `No ${tab} rules yet.`}</p>}
           {visible.map((s, i) => (
             <SuggestionCard key={s.id} s={s} index={i} selected={s.id === selectedId} onSelect={() => setSelectedId(s.id)} />
           ))}
         </div>
       </section>
-      <section aria-label="Rule details" className="relative isolate min-h-0 min-w-0 overflow-hidden"><div tabIndex={0} className="h-full overflow-y-auto overscroll-contain px-6 pb-0 pt-12 lg:px-14"><EvidencePanel key={selected.id} s={selected} status={currentStatuses[selected.id] ?? "pending"} onStatus={(st) => setStatuses((m) => ({ ...m, [selected.id]: st }))} /></div></section>
+      <section aria-label="Rule details" data-tour="inbox-detail" className="relative isolate min-h-0 min-w-0 overflow-hidden"><div tabIndex={0} className="h-full overflow-y-auto overscroll-contain px-6 pb-0 pt-12 lg:px-14"><EvidencePanel key={selected.id} s={selected} status={currentStatuses[selected.id] ?? "pending"} onStatus={(st) => setStatuses((m) => ({ ...m, [selected.id]: st }))} /></div></section>
     </div>
   );
 }

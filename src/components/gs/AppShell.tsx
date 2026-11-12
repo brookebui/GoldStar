@@ -1,13 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { Inbox, LayoutGrid, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Inbox, Network, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { StarAvatar } from "./Star";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
 const nav = [
   { to: "/", label: "Proposed Rules", icon: Inbox, count: 3 },
-  { to: "/canvas", label: "Constellations", icon: LayoutGrid },
+  { to: "/canvas", label: "Constellations", icon: Network },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -24,7 +24,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           {nav.map(({ to, label, icon: Icon, ...rest }) => (
             <Tooltip key={to}><TooltipTrigger asChild><Link to={to} activeOptions={{ exact: true }}
               aria-label={label} className="group flex h-10 items-center gap-2.5 rounded-md px-2 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground data-[status=active]:bg-card data-[status=active]:text-gold data-[status=active]:shadow-soft">
-              <Icon className="size-4 transition-transform group-hover:scale-110" strokeWidth={1.6} />
+              <Icon data-tour={label === "Constellations" ? "nav-constellations" : undefined} className="size-4 transition-transform group-hover:scale-110" strokeWidth={1.6} />
               <span className="gs-sidebar-label flex-1 whitespace-nowrap">{label}</span>
               {"count" in rest && <span className="gs-sidebar-label rounded-full bg-gold-soft px-1.5 font-mono text-[10px] text-gold-deep">{rest.count}</span>}
             </Link></TooltipTrigger>{collapsed && <TooltipContent side="right">{label}{"count" in rest ? ` · ${rest.count}` : ""}</TooltipContent>}</Tooltip>
